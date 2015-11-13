@@ -1,6 +1,7 @@
 import runWorld as rw
 import drawWorld as dw
 import pygame as pg
+from random import randint
 
 ################################################################
 
@@ -44,9 +45,11 @@ myimage = dw.loadImage("cat.bmp")
 # draw the cat halfway up the screen (height/2) and at the x
 # coordinate given by the first component of the state tuple
 #
+#state = (300, 200, 2, 1)
+
 def updateDisplay(state):
     dw.fill(dw.black)
-    dw.draw(myimage, (state[0], height/2))
+    dw.draw(myimage, (state[0], state[1]))
 
 
 ################################################################
@@ -58,7 +61,7 @@ def updateDisplay(state):
 #
 # state -> state
 def updateState(state):
-    return((state[0]+state[1],state[1]))
+    return(state[0]+state[2],state[1]+state[3],state[2],state[3])
 
 ################################################################
 
@@ -66,7 +69,7 @@ def updateState(state):
 # that is, when pos is less then zero or greater than the screen width
 # state -> bool
 def endState(state):
-    if (state[0] > width or state[0] < 0):
+    if (state[0] > width or state[0] < -100):
         return True
     else:
         return False
@@ -84,15 +87,21 @@ def endState(state):
 # edge of the screen.
 #
 # state -> event -> state
-#
+#from random import randint
+#print (randint(-5,5))
+
 def handleEvent(state, event):  
 #    print("Handling event: " + str(event))
     if (event.type == pg.MOUSEBUTTONDOWN):
-        if (state[1]) == 1:
-            newState = -1
+        if state[2] >= 0:
+           newstate = randint(-5,-1)
         else:
-            newState = 1   
-        return((state[0],newState))
+           newstate = randint(1,5)
+        if state[3] >= 0:
+           newstate2 = randint(-5,-1)
+        else:
+           newstate2 = randint(1,5)
+        return((state[0], state[1], newstate, newstate2))
     else:
         return(state)
 
@@ -101,7 +110,8 @@ def handleEvent(state, event):
 # World state will be single x coordinate at left edge of world
 
 # The cat starts at the left, moving right 
-initState = (0,1)
+
+initState = (width/2, height/2, 1, 1)
 
 # Run the simulation no faster than 60 frames per second
 frameRate = 60
